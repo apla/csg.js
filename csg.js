@@ -88,9 +88,11 @@ for solid CAD anyway.
         return a - b;
     }
 
-    // # class CSG
-    // Holds a binary space partition tree representing a 3D solid. Two solids can
-    // be combined using the `union()`, `subtract()`, and `intersect()` methods.
+    /**
+     * @class CSG
+     * Holds a binary space partition tree representing a 3D solid. Two solids can
+     * be combined using the `union()`, `subtract()`, and `intersect()` methods.
+     */
     var CSG = function() {
         this.polygons = [];
         this.properties = new CSG.Properties();
@@ -101,7 +103,10 @@ for solid CAD anyway.
     CSG.defaultResolution2D = 32;
     CSG.defaultResolution3D = 12;
 
-    // Construct a CSG solid from a list of `CSG.Polygon` instances.
+    /**
+     * Construct a CSG solid from a list of `CSG.Polygon` instances.
+     * @constructor
+     */
     CSG.fromPolygons = function(polygons) {
         var csg = new CSG();
         csg.polygons = polygons;
@@ -110,8 +115,11 @@ for solid CAD anyway.
         return csg;
     };
 
-    // Construct a CSG solid from generated slices.
-    // Look at CSG.Polygon.prototype.solidFromSlices for details
+    /**
+     * Construct a CSG solid from generated slices.
+     * Look at CSG.Polygon.prototype.solidFromSlices for details
+     * @constructor
+     */
     CSG.fromSlices = function(options) {
         return (new CSG.Polygon.createFromPoints([
             [0, 0, 0],
@@ -121,7 +129,10 @@ for solid CAD anyway.
         ])).solidFromSlices(options);
     };
 
-    // create from an untyped object with identical property names:
+    /**
+     * Create CSG from an untyped object with identical property names
+     * @constructor
+     */
     CSG.fromObject = function(obj) {
         var polygons = obj.polygons.map(function(p) {
             return CSG.Polygon.fromObject(p);
@@ -132,7 +143,9 @@ for solid CAD anyway.
         return csg;
     };
 
-    // Reconstruct a CSG from the output of toCompactBinary()
+    /**
+     * Reconstruct a CSG from the output of {@link CSG.toCompactBinary}
+     */
     CSG.fromCompactBinary = function(bin) {
         if (bin['class'] != "CSG") throw new Error("Not a CSG");
         var planes = [],
@@ -198,20 +211,23 @@ for solid CAD anyway.
             return this.polygons;
         },
 
-        // Return a new CSG solid representing space in either this solid or in the
-        // solid `csg`. Neither this solid nor the solid `csg` are modified.
-        //
-        //     A.union(B)
-        //
-        //     +-------+            +-------+
-        //     |       |            |       |
-        //     |   A   |            |       |
-        //     |    +--+----+   =   |       +----+
-        //     +----+--+    |       +----+       |
-        //          |   B   |            |       |
-        //          |       |            |       |
-        //          +-------+            +-------+
-        //
+        /**
+         * Return a new CSG solid representing space in either this solid or in the
+         * solid `csg`. Neither this solid nor the solid `csg` are modified.
+         * @param {CSG|CSG[]}
+         *
+         *     A.union(B)
+         *
+         *     +-------+            +-------+
+         *     |       |            |       |
+         *     |   A   |            |       |
+         *     |    +--+----+   =   |       +----+
+         *     +----+--+    |       +----+       |
+         *          |   B   |            |       |
+         *          |       |            |       |
+         *          +-------+            +-------+
+         *
+         */
         union: function(csg) {
             var csgs;
             if (csg instanceof Array) {
@@ -263,20 +279,22 @@ for solid CAD anyway.
             return result;
         },
 
-        // Return a new CSG solid representing space in this solid but not in the
-        // solid `csg`. Neither this solid nor the solid `csg` are modified.
-        //
-        //     A.subtract(B)
-        //
-        //     +-------+            +-------+
-        //     |       |            |       |
-        //     |   A   |            |       |
-        //     |    +--+----+   =   |    +--+
-        //     +----+--+    |       +----+
-        //          |   B   |
-        //          |       |
-        //          +-------+
-        //
+        /**
+         * Return a new CSG solid representing space in this solid but not in the
+         * solid `csg`. Neither this solid nor the solid `csg` are modified.
+         * @param {CSG|CSG[]}
+         *
+         *     A.subtract(B)
+         *
+         *     +-------+            +-------+
+         *     |       |            |       |
+         *     |   A   |            |       |
+         *     |    +--+----+   =   |    +--+
+         *     +----+--+    |       +----+
+         *          |   B   |
+         *          |       |
+         *          +-------+
+         */
         subtract: function(csg) {
             var csgs;
             if (csg instanceof Array) {
@@ -307,20 +325,22 @@ for solid CAD anyway.
             return result;
         },
 
-        // Return a new CSG solid representing space both this solid and in the
-        // solid `csg`. Neither this solid nor the solid `csg` are modified.
-        //
-        //     A.intersect(B)
-        //
-        //     +-------+
-        //     |       |
-        //     |   A   |
-        //     |    +--+----+   =   +--+
-        //     +----+--+    |       +--+
-        //          |   B   |
-        //          |       |
-        //          +-------+
-        //
+        /**
+         * Return a new CSG solid representing space both this solid and in the
+         * solid `csg`. Neither this solid nor the solid `csg` are modified.
+         * @param {CSG|CSG[]}
+         *
+         *     A.intersect(B)
+         *
+         *     +-------+
+         *     |       |
+         *     |   A   |
+         *     |    +--+----+   =   +--+
+         *     +----+--+    |       +--+
+         *          |   B   |
+         *          |       |
+         *          +-------+
+         */
         intersect: function(csg) {
             var csgs;
             if (csg instanceof Array) {
@@ -353,8 +373,10 @@ for solid CAD anyway.
             return result;
         },
 
-        // Return a new CSG solid with solid and empty space switched. This solid is
-        // not modified.
+        /**
+         * Return a new CSG solid with solid and empty space switched. This solid is
+         * not modified.
+         */
         invert: function() {
             var flippedpolygons = this.polygons.map(function(p) {
                 return p.flipped();
@@ -417,8 +439,11 @@ for solid CAD anyway.
             return result;
         },
 
-        // Expand the solid
-        // resolution: number of points per 360 degree for the rounded corners
+        /**
+         * Expand the solid
+         * @param {float} radius - expansion radius
+         * @param {int} resolution - number of points per 360 degree for the rounded corners
+         */
         expand: function(radius, resolution) {
             var result = this.expandedShell(radius, resolution, true);
             result = result.reTesselated();
@@ -426,8 +451,11 @@ for solid CAD anyway.
             return result;
         },
 
-        // Contract the solid
-        // resolution: number of points per 360 degree for the rounded corners
+        /**
+         * Contract the solid
+         * @param {float} radius - contract radius
+         * @param {int} resolution - number of points per 360 degree for the rounded corners
+         */
         contract: function(radius, resolution) {
             var expandedshell = this.expandedShell(radius, resolution, false);
             var result = this.subtract(expandedshell);
@@ -436,7 +464,9 @@ for solid CAD anyway.
             return result;
         },
 
-        // cut the solid at a plane, and stretch the cross-section found along plane normal
+        /**
+         * Cut the solid at a plane, and stretch the cross-section found along plane normal
+         */
         stretchAtPlane: function(normal, point, length) {
             var plane = CSG.Plane.fromNormalAndPoint(normal, point);
             var onb = new CSG.OrthoNormalBasis(plane);
@@ -449,13 +479,15 @@ for solid CAD anyway.
         },
 
 
-        // Create the expanded shell of the solid:
-        // All faces are extruded to get a thickness of 2*radius
-        // Cylinders are constructed around every side
-        // Spheres are placed on every vertex
-        // unionWithThis: if true, the resulting solid will be united with 'this' solid;
-        //   the result is a true expansion of the solid
-        //   If false, returns only the shell
+        /**
+         * Create the expanded shell of the solid:
+         * All faces are extruded to get a thickness of 2*radius
+         * Cylinders are constructed around every side
+         * Spheres are placed on every vertex
+         * @param {bool} unionWithThis - if true, the resulting solid will be united with 'this' solid;
+         *   the result is a true expansion of the solid
+         *   If false, returns only the shell
+         */
         expandedShell: function(radius, resolution, unionWithThis) {
             var csg = this.reTesselated();
             var result;
@@ -708,7 +740,9 @@ for solid CAD anyway.
             }
         },
 
-        // returns an array of two CSG.Vector3Ds (minimum coordinates and maximum coordinates)
+        /**
+         * Returns an array of two CSG.Vector3Ds (minimum coordinates and maximum coordinates)
+         */
         getBounds: function() {
             if (!this.cachedBoundingBox) {
                 var minpoint = new CSG.Vector3D(0, 0, 0);
@@ -731,8 +765,11 @@ for solid CAD anyway.
             return this.cachedBoundingBox;
         },
 
-        // returns true if there is a possibility that the two solids overlap
-        // returns false if we can be sure that they do not overlap
+        /**
+         * @return {bool}
+         * true if there is a possibility that the two solids overlap
+         * returns false if we can be sure that they do not overlap
+         */
         mayOverlap: function(csg) {
             if ((this.polygons.length === 0) || (csg.polygons.length === 0)) {
                 return false;
@@ -749,7 +786,9 @@ for solid CAD anyway.
             }
         },
 
-        // Cut the solid by a plane. Returns the solid on the back side of the plane
+        /**
+         * Cut the solid by a plane. Returns the solid on the back side of the plane
+         */
         cutByPlane: function(plane) {
             if (this.polygons.length === 0) {
                 return new CSG();
@@ -787,20 +826,25 @@ for solid CAD anyway.
             return result;
         },
 
-        // Connect a solid to another solid, such that two CSG.Connectors become connected
-        //   myConnector: a CSG.Connector of this solid
-        //   otherConnector: a CSG.Connector to which myConnector should be connected
-        //   mirror: false: the 'axis' vectors of the connectors should point in the same direction
-        //           true: the 'axis' vectors of the connectors should point in opposite direction
-        //   normalrotation: degrees of rotation between the 'normal' vectors of the two
-        //                   connectors
+        /**
+         * Connect a solid to another solid, such that two CSG.Connectors become connected
+         * @param {CSG.Connector} myConnector - a connector of this solid
+         * @param {CSG.Connector} otherConnector - a connector to which myConnector should be connected
+         * @param {bool} mirror
+         * false: the 'axis' vectors of the connectors should point in the same direction
+         * true: the 'axis' vectors of the connectors should point in opposite direction
+         * @param {int} normalrotation - degrees of rotation between the 'normal' vectors of the two
+         *                   connectors
+         */
         connectTo: function(myConnector, otherConnector, mirror, normalrotation) {
             var matrix = myConnector.getTransformationTo(otherConnector, mirror, normalrotation);
             return this.transform(matrix);
         },
 
-        // set the .shared property of all polygons
-        // Returns a new CSG solid, the original is unmodified!
+        /**
+         * Set the .shared property of all polygons, the original is unmodified
+         * @returns {CSG} a new CSG solid
+         */
         setShared: function(shared) {
             var polygons = this.polygons.map(function(p) {
                 return new CSG.Polygon(p.vertices, shared, p.plane);
@@ -812,6 +856,9 @@ for solid CAD anyway.
             return result;
         },
 
+        /**
+         * Sets the color of solid
+         */
         setColor: function(args) {
             var newshared = CSG.Polygon.Shared.fromColor.apply(this, arguments);
             return this.setShared(newshared);
@@ -941,9 +988,12 @@ for solid CAD anyway.
             return result;
         },
 
-        // Get the transformation that transforms this CSG such that it is lying on the z=0 plane,
-        // as flat as possible (i.e. the least z-height).
-        // So that it is in an orientation suitable for CNC milling
+        /**
+         * Get the transformation that transforms this CSG
+         * such that it is lying on the z=0 plane,
+         * as flat as possible (i.e. the least z-height).
+         * So that it is in an orientation suitable for CNC milling
+         */
         getTransformationAndInverseTransformationToFlatLying: function() {
             if (this.polygons.length === 0) {
                 var m = new CSG.Matrix4x4(); // unity
@@ -1026,9 +1076,11 @@ for solid CAD anyway.
             return this.transform(transformation);
         },
 
-        // project the 3D CSG onto a plane
-        // This returns a 2D CAG with the 'shadow' shape of the 3D solid when projected onto the
-        // plane represented by the orthonormal basis
+        /**
+         * Project the 3D CSG onto a plane
+         * @returns {CAG} a 2D CAG with the 'shadow' shape of the 3D solid when projected onto the
+         * plane represented by the orthonormal basis
+         */
         projectToOrthoNormalBasis: function(orthobasis) {
             var EPS = 1e-5;
             var cags = [];
@@ -1403,8 +1455,13 @@ for solid CAD anyway.
         }
     };
 
-    // Parse an option from the options object
-    // If the option is not present, return the default value
+    /**
+     * Parse an option from the options object or return default value
+     * @param {object} options
+     * @param {string} optionname
+     * @param {*} defaultvalue
+     * @returns {*}
+     */
     CSG.parseOption = function(options, optionname, defaultvalue) {
         var result = defaultvalue;
         if (options) {
@@ -1469,17 +1526,20 @@ for solid CAD anyway.
         return result;
     };
 
-    // Construct an axis-aligned solid cuboid.
-    // Parameters:
-    //   center: center of cube (default [0,0,0])
-    //   radius: radius of cube (default [1,1,1]), can be specified as scalar or as 3D vector
-    //
-    // Example code:
-    //
-    //     var cube = CSG.cube({
-    //       center: [0, 0, 0],
-    //       radius: 1
-    //     });
+    /**
+     * Construct an axis-aligned solid cuboid.
+     * @constructor
+     * @param {object} options
+     * @param {float[]} [options.center=[0,0,0]] - center of cube
+     * @param {float|float[]} [options.radius=[1,1,1]] - radius of cube, can be specified as scalar or as 3D vector
+     *
+     * @example
+     *
+     *     var cube = CSG.cube({
+     *       center: [0, 0, 0],
+     *       radius: 1
+     *     });
+     */
     CSG.cube = function(options) {
         var c, r;
         options = options || {};
@@ -1545,21 +1605,23 @@ for solid CAD anyway.
         return result;
     };
 
-    // Construct a solid sphere
-    //
-    // Parameters:
-    //   center: center of sphere (default [0,0,0])
-    //   radius: radius of sphere (default 1), must be a scalar
-    //   resolution: determines the number of polygons per 360 degree revolution (default 12)
-    //   axes: (optional) an array with 3 vectors for the x, y and z base vectors
-    //
-    // Example usage:
-    //
-    //     var sphere = CSG.sphere({
-    //       center: [0, 0, 0],
-    //       radius: 2,
-    //       resolution: 32,
-    //     });
+    /**
+     * Construct a solid sphere
+     * @constructor
+     * @param {object} options
+     * @param {CSG.Vector3D} [options.center=[0, 0, 0]] - center of sphere (default [0,0,0])
+     * @param {float} [options.radius=1] - radius of sphere (default 1), must be a scalar
+     * @param {int} [options.resolution=12] - determines the number of polygons per 360 degree revolution (default 12)
+     * @param {CSG.Vector3D[]} [options.axes] an array with 3 vectors for the x, y and z base vectors
+     *
+     * @example
+     *
+     *     var sphere = CSG.sphere({
+     *       center: [0, 0, 0],
+     *       radius: 2,
+     *       resolution: 32,
+     *     });
+     */
     CSG.sphere = function(options) {
         options = options || {};
         var center = CSG.parseOptionAs3DVector(options, "center", [0, 0, 0]);
@@ -1622,22 +1684,23 @@ for solid CAD anyway.
         return result;
     };
 
-    // Construct a solid cylinder.
-    //
-    // Parameters:
-    //   start: start point of cylinder (default [0, -1, 0])
-    //   end: end point of cylinder (default [0, 1, 0])
-    //   radius: radius of cylinder (default 1), must be a scalar
-    //   resolution: determines the number of polygons per 360 degree revolution (default 12)
-    //
-    // Example usage:
-    //
-    //     var cylinder = CSG.cylinder({
-    //       start: [0, -1, 0],
-    //       end: [0, 1, 0],
-    //       radius: 1,
-    //       resolution: 16
-    //     });
+    /**
+     * Construct a solid cylinder.
+     * @param {object} options
+     * @param {CSG.Vector3D} [options.start=[0, -1, 0]] start point of cylinder
+     * @param {CSG.Vector3D} [options.end=[0, -1, 0]] end point of cylinder
+     * @param {float} [options.radius=1] radius of cylinder, must be a scalar
+     * @param {float} [options.resolution={@see CSG.defaultResolution2D}] determines the number of polygons per 360 degree revolution
+     *
+     * @example
+     *
+     * var cylinder = CSG.cylinder({
+     *     start: [0, -1, 0],
+     *     end: [0, 1, 0],
+     *     radius: 1,
+     *     resolution: 16
+     * });
+     */
     CSG.cylinder = function(options) {
         var s = CSG.parseOptionAs3DVector(options, "start", [0, -1, 0]);
         var e = CSG.parseOptionAs3DVector(options, "end", [0, 1, 0]);
@@ -1710,23 +1773,24 @@ for solid CAD anyway.
         return result;
     };
 
-    // Like a cylinder, but with rounded ends instead of flat
-    //
-    // Parameters:
-    //   start: start point of cylinder (default [0, -1, 0])
-    //   end: end point of cylinder (default [0, 1, 0])
-    //   radius: radius of cylinder (default 1), must be a scalar
-    //   resolution: determines the number of polygons per 360 degree revolution (default 12)
-    //   normal: a vector determining the starting angle for tesselation. Should be non-parallel to start.minus(end)
-    //
-    // Example usage:
-    //
-    //     var cylinder = CSG.roundedCylinder({
-    //       start: [0, -1, 0],
-    //       end: [0, 1, 0],
-    //       radius: 1,
-    //       resolution: 16
-    //     });
+    /**
+     * Like a cylinder, but with rounded ends instead of flat
+     * @param {object} options
+     * @param {CSG.Vector3D} [options.start=[0, -1, 0]] start point of cylinder
+     * @param {CSG.Vector3D} [options.end=[0, -1, 0]] end point of cylinder
+     * @param {float} [options.radius=1] radius of cylinder, must be a scalar
+     * @param {float} [options.resolution={@see CSG.defaultResolution2D}] determines the number of polygons per 360 degree revolution
+     * @param {CSG.Vector3D} [options.normal] a vector determining the starting angle for tesselation. Should be non-parallel to `start - end`
+     *
+     * @example
+     *
+     * var cylinder = CSG.roundedCylinder({
+     *     start: [0, -1, 0],
+     *     end: [0, 1, 0],
+     *     radius: 1,
+     *     resolution: 16
+     * });
+     */
     CSG.roundedCylinder = function(options) {
         var p1 = CSG.parseOptionAs3DVector(options, "start", [0, -1, 0]);
         var p2 = CSG.parseOptionAs3DVector(options, "end", [0, 1, 0]);
@@ -1806,26 +1870,29 @@ for solid CAD anyway.
         result.properties.roundedCylinder.facepoint = p1.plus(xvector);
         return result;
     };
-	
-	// Construct a elliptic cylinder.
-    //
-    // Parameters:
-    //   start: start point of cylinder (default [0, -1, 0])
-    //   end: end point of cylinder (default [0, 1, 0])
-    //   radius: radius of cylinder (default [1,1]), must be two dimensional array
-	//	 radiusStart: can be used instead of radius with combination with radiousEnd
-	//	 radiusEnd: can be used instead of radius with combination with radiusStart
-    //   resolution: determines the number of polygons per 360 degree revolution (default 12)
-    //
-    // Example usage:
-    //
-    //     var cylinder = CSG.cylinderElliptic({
-    //       start: [0, -1, 0],
-    //       end: [0, 1, 0],
-    //       radiusStart: [10, 5],
-	//       radiusStart: [8, 3],
-    //       resolution: 16
-    //     });
+
+    /**
+     * Construct a elliptic cylinder.
+     * @param {object} options
+     * @param {CSG.Vector3D} [options.start=[0, -1, 0]] start point of cylinder
+     * @param {CSG.Vector3D} [options.end=[0, -1, 0]] end point of cylinder
+     * @param {float} [options.radius=1] radius of cylinder, must be a scalar
+     * @param {CSG.Vector2D} [options.radiusStart] can be used instead of radius with combination with radiousEnd
+     * @param {CSG.Vector2D} [options.radiusEnd] can be used instead of radius with combination with radiusStart
+     * @param {float} [options.resolution={@see CSG.defaultResolution2D}] determines the number of polygons per 360 degree revolution
+     * @param {CSG.Vector3D} [options.normal] a vector determining the starting angle for tesselation. Should be non-parallel to `start - end`
+     *
+     * @example
+     *
+     * var cylinder = CSG.cylinderElliptic({
+     *     start: [0, -1, 0],
+     *     end: [0, 1, 0],
+     *     radiusStart: [10, 5],
+     *     radiusEnd: [8, 3],
+     *     // radius: 1,
+     *     resolution: 16
+     * });
+     */
 	CSG.cylinderElliptic = function(options) {
 		var s = CSG.parseOptionAs3DVector(options, "start", [0, -1, 0]);
 		var e = CSG.parseOptionAs3DVector(options, "end", [0, 1, 0]);
@@ -1860,7 +1927,7 @@ for solid CAD anyway.
 		for(var i = 0; i < slices; i++) {
 			var t0 = i / slices,
 				t1 = (i + 1) / slices;
-			
+
 			if(rEnd._x == rStart._x && rEnd._y == rStart._y) {
 				polygons.push(new CSG.Polygon([start, point(0, t0, rEnd), point(0, t1, rEnd)]));
 				polygons.push(new CSG.Polygon([point(0, t1, rEnd), point(0, t0, rEnd), point(1, t0, rEnd), point(1, t1, rEnd)]));
@@ -1884,21 +1951,24 @@ for solid CAD anyway.
 		return result;
 	};
 
-    // Construct an axis-aligned solid rounded cuboid.
-    // Parameters:
-    //   center: center of cube (default [0,0,0])
-    //   radius: radius of cube (default [1,1,1]), can be specified as scalar or as 3D vector
-    //   roundradius: radius of rounded corners (default 0.2), must be a scalar
-    //   resolution: determines the number of polygons per 360 degree revolution (default 8)
-    //
-    // Example code:
-    //
-    //     var cube = CSG.roundedCube({
-    //       center: [0, 0, 0],
-    //       radius: 1,
-    //       roundradius: 0.2,
-    //       resolution: 8,
-    //     });
+    /**
+     * Construct an axis-aligned solid rounded cuboid.
+     * @constructor
+     * @param {object} options
+     * @param {CSG.Vector3D} [options.center=[0,0,0]] - center of cube
+     * @param {float|CSG.Vector3D} [options.radius=[1,1,1]] - radius of cube, can be specified as scalar or as 3D vector
+     * @param {float} [options.roundradius=0.2] radius of rounded corners
+     * @param {int} [options.resolution={@see CSG.defaultResolution3D}] determines the number of polygons per 360 degree revolution
+     *
+     * @example
+     *
+     *     var cube = CSG.roundedCube({
+     *       center: [0, 0, 0],
+     *       radius: 1,
+     *       roundradius: 0.2,
+     *       resolution: 8,
+     *     });
+     */
     CSG.roundedCube = function(options) {
         var EPS = 1e-5;
         var minRR = 1e-2; //minroundradius 1e-3 gives rounding errors already
@@ -1948,7 +2018,12 @@ for solid CAD anyway.
     };
 
     /**
-     * polyhedron accepts openscad style arguments. I.e. define face vertices clockwise looking from outside
+     * Polyhedron accepts openscad style arguments. I.e. define face vertices clockwise looking from outside
+     * @constructor
+     * @todo
+     * @param {object} options
+     * @param {CSG.Vector3D[]} options.points
+     * @param {CSG.Vector3D[]} options.faces
      */
     CSG.polyhedron = function(options) {
         options = options || {};
@@ -2007,16 +2082,18 @@ for solid CAD anyway.
         return [x, y];
     };
 
-    // # class Vector3D
-    // Represents a 3D vector.
-    //
-    // Example usage:
-    //
-    //     new CSG.Vector3D(1, 2, 3);
-    //     new CSG.Vector3D([1, 2, 3]);
-    //     new CSG.Vector3D({ x: 1, y: 2, z: 3 });
-    //     new CSG.Vector3D(1, 2); // assumes z=0
-    //     new CSG.Vector3D([1, 2]); // assumes z=0
+    /**
+     * @class Vector3D
+     * Represents a 3D vector.
+     *
+     * @example
+     *
+     *     new CSG.Vector3D(1, 2, 3);
+     *     new CSG.Vector3D([1, 2, 3]);
+     *     new CSG.Vector3D({ x: 1, y: 2, z: 3 });
+     *     new CSG.Vector3D(1, 2); // assumes z=0
+     *     new CSG.Vector3D([1, 2]); // assumes z=0
+     */
     CSG.Vector3D = function(x, y, z) {
         if (arguments.length == 3) {
             this._x = parseFloat(x);
@@ -2208,12 +2285,14 @@ for solid CAD anyway.
         }
     };
 
-    // # class Vertex
-    // Represents a vertex of a polygon. Use your own vertex class instead of this
-    // one to provide additional features like texture coordinates and vertex
-    // colors. Custom vertex classes need to provide a `pos` property
-    // `flipped()`, and `interpolate()` methods that behave analogous to the ones
-    // defined by `CSG.Vertex`.
+    /**
+     @class Vertex
+     * Represents a vertex of a polygon. Use your own vertex class instead of this
+     * one to provide additional features like texture coordinates and vertex
+     * colors. Custom vertex classes need to provide a `pos` property
+     * `flipped()`, and `interpolate()` methods that behave analogous to the ones
+     * defined by `CSG.Vertex`.
+     */
     CSG.Vertex = function(pos) {
         this.pos = pos;
     };
